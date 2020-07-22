@@ -91,7 +91,7 @@ namespace UnityEditor.XR.Management.Metadata
         private const string k_AssigningPackage = "XRMGT Assigning XR Package.";
         private const string k_UninstallingPackage = "XRMGT Uninstalling XR Package.";
 
-        private static float k_TimeOutDelta = 30f;
+        private static float k_TimeOutDelta = 300f; // * was 30f originally
 
         enum InstallationState
         {
