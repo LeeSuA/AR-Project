@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using TMPro;
@@ -12,10 +13,12 @@ public class MakeDrillManager : MonoBehaviour
     public GameObject arSession_Origin;
     public GameObject arSession;
     public GameObject arCam;
-    public GameObject markerPrefab;
+    public GameObject markerPrefab_start;
     public GameObject cntText;
+    public GameObject buttons;
+    public GameObject initialGuide;
 
-    public GameObject makeButton, removeButton;
+    public GameObject finishAlert;
 
     private List<GameObject> markerObjects = new List<GameObject>();
     private List<Vector3> markersPosition = new List<Vector3>();
@@ -24,27 +27,7 @@ public class MakeDrillManager : MonoBehaviour
     {
         trackedImageManager.trackedImagesChanged += OnTrackedImageChanged;
     }
-
-    private void Update()
-    {
-        if(markersPosition.Count <= 1)
-        {
-            removeButton.SetActive(false);
-        }
-        else
-        {
-            removeButton.SetActive(true);
-        }
-
-
-        if(markerObjects.Count > 0)
-        {
-            cntText.SetActive(true);
-            cntText.GetComponent<TMP_Text>().text = "Save Points : " + markerObjects.Count;
-        }
-
-
-    }
+    
     private void OnTrackedImageChanged(ARTrackedImagesChangedEventArgs args)
     {
         List<ARTrackedImage> addedImages = args.added;
@@ -52,43 +35,49 @@ public class MakeDrillManager : MonoBehaviour
 
         foreach(ARTrackedImage image in addedImages)
         {
-            if(image.referenceImage.name == "QR")
+            if (image.referenceImage.name == "QR")
             {
-                InitializePosition();
+                if (markersPosition.Count == 0)
+                {
+                    InitializePosition();
+                }
             }
         }
 
-        cntText.SetActive(true);
+    }
+
+    public void TrackButtonEvent()
+    {
+        InitializePosition();
     }
 
     private void InitializePosition()
     {
-        if (markersPosition.Count == 0)
-        {
-            arCam.transform.position = arSession_Origin.transform.position;
-            arCam.transform.rotation = arSession_Origin.transform.rotation;
-            makeButton.SetActive(true);
-            removeButton.SetActive(true);
-            MarkerAdd();
-        }
+        arSession_Origin.transform.position = arCam.transform.position;
+        arSession_Origin.transform.rotation = arCam.transform.rotation;
+
+        buttons.SetActive(true);
+        initialGuide.SetActive(false);
+
+        MarkerAdd(markerPrefab_start);
     }
-
-    string debstr = null;
-
-    public void MarkerAdd()
+    
+    public void MarkerAdd(GameObject mp)
     {
         markersPosition.Add(arCam.transform.position);
-        markerObjects.Add( Instantiate(markerPrefab, arCam.transform.position, Quaternion.Euler(90, 0, 0) ) );
-        debstr += "(" + markersPosition.Count + ") " + markerObjects[markersPosition.Count-1].transform.position.ToString() + "\n";
-        Debug.Log(debstr);
+        markerObjects.Add( Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.3f - Vector3.up * 0.2f), Quaternion.Euler(90, 0, 0) ) );
+
+        cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
     }
 
-    public void MarkerAdd_EndDrill()
+    public void MarkerAdd_EndDrill(GameObject mp)
     {
         markersPosition.Add(arCam.transform.position);
-        markerObjects.Add(Instantiate(markerPrefab, arCam.transform.position, Quaternion.Euler(90, 0, 0)));
-        debstr += "(" + markersPosition.Count + ") " + markerObjects[markersPosition.Count - 1].transform.position.ToString() + "\n";
-        Debug.Log(debstr);
+        markerObjects.Add(Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.3f - Vector3.up*0.2f), Quaternion.Euler(90, 0, 0)));
+
+        cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
+
+        FinishMakingDrill(markersPosition.Count);
     }
 
     public void MarkerDelete()
@@ -98,8 +87,18 @@ public class MakeDrillManager : MonoBehaviour
             markersPosition.RemoveAt(markersPosition.Count - 1);
             Destroy(markerObjects[markerObjects.Count - 1]);
             markerObjects.RemoveAt(markerObjects.Count - 1);
-            debstr.Remove(debstr.LastIndexOf("("));
-            Debug.Log(debstr);
+            cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
         }
+    }
+
+
+    public void FinishMakingDrill(int cnt)
+    {
+        finishAlert.SetActive(true);
+    }
+
+    public void Scenemove()
+    {
+        SceneManager.LoadScene("SampleScene");
     }
 }
