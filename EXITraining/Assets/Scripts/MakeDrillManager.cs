@@ -57,6 +57,7 @@ public class MakeDrillManager : MonoBehaviour
     
     public void MarkerAdd(GameObject mp)
     {
+        
         markersPosition.Add(arCam.transform.position);
         markerObjects.Add( Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.2f - Vector3.up * 0.35f), Quaternion.Euler(90, 0, 0) ) );
 
