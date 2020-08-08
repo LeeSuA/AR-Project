@@ -7,26 +7,36 @@ using UnityEngine.UI;
 using ZXing.QrCode;
 
 public class CreateQR : MonoBehaviour
-{
-   // [SerializeField] private BarcodeFormat format = BarcodeFormat.QR_CODE;
-    private RawImage codeimage;
+{ 
+    public RawImage codeimage;
     public GameObject inputQR;
     private string code;
-  
-    // Start is called before the first frame update
+    private TouchScreenKeyboard keyboard;
+
+    private void Update()
+    {
+        
+    }
+  //  public void openKeyboard()
+    //{
+      //  keyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default, false, false, false, false);
+    //}
     private void Start()
     {
-        codeimage = this.GetComponent<RawImage>();
+
     }
-    
-   public void OnGUI()
+    public void OnGUI()
     {
-        code = inputQR.GetComponent<TMP_Text>().text;
-        Texture2D myQR = generateQR(code);
-        codeimage.GetComponent<RawImage>().texture = generateQR(code);
-
+        
+        if (Input.GetKeyDown(KeyCode.Return)||(TouchScreenKeyboard.visible==false))
+            {
+        
+            code = inputQR.GetComponent<TMP_Text>().text;
+            Debug.Log(code);
+            Texture2D myQR = generateQR(code);
+            codeimage.GetComponent<RawImage>().texture = generateQR(code);
+        }
     }
-
     public Texture2D generateQR(string text)
     {
         var encoded = new Texture2D(256, 256);
@@ -35,7 +45,6 @@ public class CreateQR : MonoBehaviour
         encoded.Apply();
         return encoded;
     }
-
     private static Color32[] Encode(string textForEncoding, int width, int height)
     {
         var writer = new BarcodeWriter
@@ -49,7 +58,4 @@ public class CreateQR : MonoBehaviour
         };
         return writer.Write(textForEncoding);
     }
-
 }
-
-
