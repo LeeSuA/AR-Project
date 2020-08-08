@@ -40,42 +40,32 @@ public class MakeDrillManager : MonoBehaviour
                 if (markersPosition.Count == 0)
                 {
                     InitializePosition();
+                    buttons.SetActive(true);
+                    MarkerAdd(markerPrefab_start);
                 }
             }
         }
 
     }
+    
 
-    public void TrackButtonEvent()
+    public void InitializePosition()
     {
-        InitializePosition();
-    }
-
-    private void InitializePosition()
-    {
-        arSession_Origin.transform.position = arCam.transform.position;
-        arSession_Origin.transform.rotation = arCam.transform.rotation;
-
-        buttons.SetActive(true);
-        initialGuide.SetActive(false);
-
-        MarkerAdd(markerPrefab_start);
+        arSession_Origin.transform.Rotate(0, -arCam.transform.rotation.eulerAngles.y, 0);
+        arSession_Origin.transform.position -= arCam.transform.position;
     }
     
     public void MarkerAdd(GameObject mp)
     {
         markersPosition.Add(arCam.transform.position);
-        markerObjects.Add( Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.3f - Vector3.up * 0.2f), Quaternion.Euler(90, 0, 0) ) );
+        markerObjects.Add( Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.2f - Vector3.up * 0.35f), Quaternion.Euler(90, 0, 0) ) );
 
         cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
     }
 
     public void MarkerAdd_EndDrill(GameObject mp)
     {
-        markersPosition.Add(arCam.transform.position);
-        markerObjects.Add(Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.3f - Vector3.up*0.2f), Quaternion.Euler(90, 0, 0)));
-
-        cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
+        MarkerAdd(mp);
 
         FinishMakingDrill(markersPosition.Count);
     }
