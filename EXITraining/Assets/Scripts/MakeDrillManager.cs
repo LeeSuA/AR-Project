@@ -21,7 +21,7 @@ public class MakeDrillManager : MonoBehaviour
     public GameObject finishAlert;
 
     private List<GameObject> markerObjects = new List<GameObject>();
-    private List<Vector3> markersPosition = new List<Vector3>();
+    private List<Vector3> markersPosition = SingletonManager.markersPosition;
 
     private void Start()
     {
@@ -87,9 +87,5 @@ public class MakeDrillManager : MonoBehaviour
     {
         finishAlert.SetActive(true);
     }
-
-    public void Scenemove()
-    {
-        SceneManager.LoadScene("SampleScene");
-    }
+    
 }

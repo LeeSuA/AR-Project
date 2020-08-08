@@ -3,14 +3,11 @@ using System.Collections;
 
 public class PlayerLookAt : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
+
+    public GameObject arCam;
+
 	void Update () {
- 		//카메라 쳐다오라우~
-		transform.LookAt(Camera.main.transform.position);
+		transform.LookAt(arCam.transform.position);
+        Debug.Log(arCam.transform.name);
 	}
 }
