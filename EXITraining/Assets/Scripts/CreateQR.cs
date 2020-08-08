@@ -8,35 +8,31 @@ using ZXing.QrCode;
 
 public class CreateQR : MonoBehaviour
 { 
-    public RawImage codeimage;
+    private RawImage codeimage;
     public GameObject inputQR;
-    private string code;
-    private TouchScreenKeyboard keyboard;
 
-    private void Update()
-    {
-        
-    }
-  //  public void openKeyboard()
-    //{
-      //  keyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default, false, false, false, false);
-    //}
+    private string code;
+    private string last_code = null;
+
+
     private void Start()
     {
-
+        codeimage = this.gameObject.GetComponent<RawImage>();
     }
+
     public void OnGUI()
     {
-        
-        if (Input.GetKeyDown(KeyCode.Return)||(TouchScreenKeyboard.visible==false))
-            {
-        
-            code = inputQR.GetComponent<TMP_Text>().text;
+        code = inputQR.gameObject.GetComponent<TMP_Text>().text;
+
+        if (last_code != code)
+        {
             Debug.Log(code);
             Texture2D myQR = generateQR(code);
             codeimage.GetComponent<RawImage>().texture = generateQR(code);
         }
+        last_code = code;
     }
+
     public Texture2D generateQR(string text)
     {
         var encoded = new Texture2D(256, 256);
@@ -45,6 +41,7 @@ public class CreateQR : MonoBehaviour
         encoded.Apply();
         return encoded;
     }
+
     private static Color32[] Encode(string textForEncoding, int width, int height)
     {
         var writer = new BarcodeWriter
