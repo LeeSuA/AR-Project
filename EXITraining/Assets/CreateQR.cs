@@ -9,21 +9,16 @@ using ZXing.QrCode;
 public class CreateQR : MonoBehaviour
 {
    // [SerializeField] private BarcodeFormat format = BarcodeFormat.QR_CODE;
-    public RawImage codeimage;
+    private RawImage codeimage;
     public GameObject inputQR;
     private string code;
   
     // Start is called before the first frame update
     private void Start()
     {
-
+        codeimage = this.GetComponent<RawImage>();
     }
-
-    // Update is called once per frame
-    private void Update()
-    {
-        
-    }
+    
    public void OnGUI()
     {
         code = inputQR.GetComponent<TMP_Text>().text;
