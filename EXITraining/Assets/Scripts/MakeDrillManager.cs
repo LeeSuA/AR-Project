@@ -5,6 +5,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using TMPro;
+using Firebase;
+using Firebase.Unity.Editor;
+using Firebase.Database;
+using System;
 
 public class MakeDrillManager : MonoBehaviour
 {
@@ -22,6 +26,7 @@ public class MakeDrillManager : MonoBehaviour
 
     private List<GameObject> markerObjects = new List<GameObject>();
     private List<Vector3> markersPosition = new List<Vector3>();
+    public String location;
 
     private void Start()
     {
@@ -65,14 +70,18 @@ public class MakeDrillManager : MonoBehaviour
     public void MarkerAdd(GameObject mp)
     {
         markersPosition.Add(arCam.transform.position);
+        location = arCam.transform.position.ToString();
+        CreateLocation();
         markerObjects.Add( Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.3f - Vector3.up * 0.2f), Quaternion.Euler(90, 0, 0) ) );
 
-        cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
+        cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();       
     }
 
     public void MarkerAdd_EndDrill(GameObject mp)
     {
         markersPosition.Add(arCam.transform.position);
+        location = arCam.transform.position.ToString();
+        CreateLocation();
         markerObjects.Add(Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.3f - Vector3.up*0.2f), Quaternion.Euler(90, 0, 0)));
 
         cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
@@ -95,10 +104,20 @@ public class MakeDrillManager : MonoBehaviour
     public void FinishMakingDrill(int cnt)
     {
         finishAlert.SetActive(true);
+
     }
 
     public void Scenemove()
     {
         SceneManager.LoadScene("SampleScene");
+    }
+
+    public void CreateLocation()
+    {
+        Debug.Log(TempDrill.code);
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://exitraining-3962c.firebaseio.com/");
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+        reference.Child("Location").Child(TempDrill.code).Child((markersPosition.Count-1).ToString()).SetValueAsync(location);
+
     }
 }
