@@ -26,7 +26,7 @@ public class MakeDrillManager : MonoBehaviour
 
     private List<GameObject> markerObjects = new List<GameObject>();
     private List<Vector3> markersPosition = new List<Vector3>();
-    public String location;
+    public List<float> location = new List<float>();
 
     private void Start()
     {
@@ -69,18 +69,23 @@ public class MakeDrillManager : MonoBehaviour
     
     public void MarkerAdd(GameObject mp)
     {
+        
         markersPosition.Add(arCam.transform.position);
-        location = arCam.transform.position.ToString();
+        location.Add(arCam.transform.position.x);
+        location.Add(arCam.transform.position.y);
+        location.Add(arCam.transform.position.z);
         CreateLocation();
         markerObjects.Add( Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.3f - Vector3.up * 0.2f), Quaternion.Euler(90, 0, 0) ) );
-
-        cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();       
+        cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
+        location.RemoveRange(0, 3);
     }
 
     public void MarkerAdd_EndDrill(GameObject mp)
     {
         markersPosition.Add(arCam.transform.position);
-        location = arCam.transform.position.ToString();
+        location[0] = arCam.transform.position.x;
+        location[1] = arCam.transform.position.y;
+        location[2] = arCam.transform.position.z;
         CreateLocation();
         markerObjects.Add(Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.3f - Vector3.up*0.2f), Quaternion.Euler(90, 0, 0)));
 
