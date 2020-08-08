@@ -26,15 +26,5 @@ public class PopUp : MonoBehaviour
     public void PopUpText(string s)
     {
 
-        popupText.SetActive(true);
-        popupObject.SetActive(true);
-        tmp_text.text = s;
-        tmp_text.faceColor = new Color32(255, 255, 255, 255);
-        popupObject.GetComponent<Image>().color = new Color32(0, 0, 0, 127);
-
-        for(int i=0; i<fadeSpeed; ++i)
-        {
-            
-        }
     }
 }

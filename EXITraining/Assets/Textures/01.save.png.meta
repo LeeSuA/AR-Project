@@ -1,5 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
+<<<<<<< HEAD:EXITraining/Assets/Textures/01.save.png.meta
 guid: 5ad92a6ed94c2924dae2642a772430db
+=======
+guid: 12a244f4c710a014682a60d894d53c3e
+>>>>>>> a255a2aec8bfb25472af9e768ecf2e25ed769108:EXITraining/Assets/Textures/02.remove.png.meta
+=======
+guid: 5ad92a6ed94c2924dae2642a772430db
+>>>>>>> a255a2aec8bfb25472af9e768ecf2e25ed769108
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
