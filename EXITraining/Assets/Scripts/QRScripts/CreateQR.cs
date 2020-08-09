@@ -29,6 +29,7 @@ public class CreateQR : MonoBehaviour
             Debug.Log(code);
             Texture2D myQR = generateQR(code);
             codeimage.GetComponent<RawImage>().texture = generateQR(code);
+            SingletonManager.drillCode = code;
         }
         last_code = code;
     }

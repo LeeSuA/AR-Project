@@ -7,20 +7,57 @@ using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
 public class StartNavigate : MonoBehaviour
-{ 
+{
+    public ARTrackedImageManager trackedImageManager;
     public GameObject arSession_Origin;
-    public GameObject arSession; 
     public GameObject arCam;
     public GameObject arrow; //안내할 화살표
+    public GameObject points; // 저장포인트 시각화할 프리팹
+
+    public GameObject initialGuide; // 훈련시작안내창
+    public GameObject completed; // 훈련종료안내창
+
+
+    private List<Vector3> markersPosition = SingletonManager.markersPosition; //마커 위치정보 리스트
+    private List<GameObject> markerObjects = new List<GameObject>();
     public Vector3 nextPosition; //다음 추적할 포인트의 위치값
-    public int markerCount = 0;//markersPosition의 인덱스
-    public GameObject a;
-    public GameObject completed; //훈련종료
-
-    private List<Vector3> markersPosition = SingletonManager.markersPosition;//마커 위치정보 리스트
+    public int markerCount = 0; //markersPosition의 인덱스
 
 
-    
+    bool qrRead = false;
+
+    private void Start()
+    {
+        trackedImageManager.trackedImagesChanged += OnTrackedImageChanged;
+    }
+
+    private void OnTrackedImageChanged(ARTrackedImagesChangedEventArgs args)
+    {
+        List<ARTrackedImage> addedImages = args.added;
+        List<ARTrackedImage> removedImages = args.removed;
+
+        foreach (ARTrackedImage image in addedImages)
+        {
+            if (image.referenceImage.name == "QR")
+            {
+                if (markersPosition.Count == 0)
+                {
+                    OnQRwasRead();
+                }
+            }
+        }
+
+    }
+
+    public void OnQRwasRead()
+    {
+        qrRead = true;
+        MarkersAdd();
+        arrow.SetActive(true);
+        initialGuide.SetActive(false);
+        InitializePosition();
+        nextPosition = markersPosition[0];
+    }
 
     public void InitializePosition()
     {
@@ -28,65 +65,72 @@ public class StartNavigate : MonoBehaviour
         arSession_Origin.transform.position -= arCam.transform.position;
     }
 
+    public void MarkersAdd()
+    {
+        for (int i = 0; i < markersPosition.Count; ++i)
+        {
+            markerObjects.Add(Instantiate(points, markersPosition[i], Quaternion.Euler(90, 0, 0)));
+        }
+    }
+
     void Update()
     {
-        if (markersPosition.Count > 0)
+        // 마커 비어있는 경우 예외
+        if (markersPosition == null || !qrRead)
         {
-            if (Vector3.Distance(arCam.transform.position, nextPosition) <= 0.2f)//next포인트와의 거리가 0.2m 이하면 updateNextPoint()
-            {
-                markerCount++;
-                UpdateNextPoint();
-            }
+            return;
         }
-        else
-        {
-            Debug.Log("마커가 없어!");
-        }
-        
 
-        arrow.transform.position = arCam.transform.position + arCam.transform.forward * 0.25f - arCam.transform.up * 0.3f;
+        // 화살표 위치 카메라에 고정
+        arrow.transform.position = arCam.transform.position + arCam.transform.forward * 0.35f - arCam.transform.up * 0.15f;
         arrow.transform.LookAt(nextPosition);
 
-        if (markerCount == (markersPosition.Count - 1))
+        // 접촉 연산
+        if (Vector3.Distance(arCam.transform.position, nextPosition) <= 0.3f)
         {
-            //훈련 끝
+            UpdateNextPoint();
+        }
+        
+        // 마지막
+        if (markerCount == markersPosition.Count)
+        {
             completed.SetActive(true);
         }
 
-        //훈련종료 창이 떴을때
-        if(completed.activeSelf == true)
-        {
-            //화면 더블 클릭시
-            Touch touch = Input.GetTouch(0);
-
-            //앱 종료
-            if (touch.phase == TouchPhase.Began)
-            {
-                SingletonManager.Quit();
-            }
-        }
-        
-        
-
-       Navigate(nextPosition);
+        Navigate(nextPosition);
 
     }
 
-    public void MarkersAdd()
+
+    void UpdateNextPoint() //nextPoint를 다음 포인트로 업데이트
     {
-        for(int i=0; i<markersPosition.Count; ++i)
+        if (markerCount+1 < markersPosition.Count)
         {
-            Instantiate(a, markersPosition[i], new Quaternion(0,0,0,0));
+            nextPosition = markersPosition[markerCount+1];
         }
+        else
+        {
+            nextPosition = new Vector3(9999, 9999, 9999);
+            arrow.SetActive(false);
+        }
+
+        if (markerObjects.Count > 1 && markerCount >= 0 && markerCount < markersPosition.Count)
+        {
+            Destroy(markerObjects[markerCount]);
+        }
+
+        markerCount++;
+
+#if ANDROID
+        Handheld.Vibrate();
+#endif
     }
 
-    void UpdateNextPoint()//nextPoint를 다음 포인트로 업데이트
-    {
-        nextPosition = markersPosition[markerCount];
-    }
 
     void Navigate(Vector3 nextPosition)//화살표가 nextPosition을 가리키게 함
     {
         arrow.transform.LookAt(nextPosition);
     }
+    
+
 }

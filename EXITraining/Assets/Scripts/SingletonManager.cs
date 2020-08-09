@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class SingletonManager : MonoBehaviour
 {
@@ -22,18 +21,9 @@ public class SingletonManager : MonoBehaviour
             return current;
         }
     }
+    
 
-    public static void Quit()
-    {
-        Application.Quit();
-    }
-
-    public static void SceneSwitch(string s)
-    {
-        SceneManager.LoadScene(s);
-    }
-
-    public static List<Vector3> markersPosition = null;
+    public static List<Vector3> markersPosition = new List<Vector3>();
     public static string drillCode = null;
     
 }

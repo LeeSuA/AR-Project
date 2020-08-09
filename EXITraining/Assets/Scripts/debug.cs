@@ -19,6 +19,7 @@ public class debug : MonoBehaviour
     {
         txt.text = "AR Sess.Or : " + arSessOr.transform.position.ToString() + arSessOr.transform.rotation.ToString();
         txt.text += "\nAR Session : " + arSession.transform.position.ToString() + arSession.transform.rotation.ToString();
-        txt.text += "\nAR Camera : " + arCam.transform.position.ToString() + arCam.transform.rotation.ToString() + arCam.transform.rotation.eulerAngles.ToString() ;
+        txt.text += "\nAR Camera : " + arCam.transform.position.ToString() + arCam.transform.rotation.ToString() + arCam.transform.rotation.eulerAngles.ToString();
+        txt.text += "\nDrillCode : " + SingletonManager.drillCode;
     }
 }
