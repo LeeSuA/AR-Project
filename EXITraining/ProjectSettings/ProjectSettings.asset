@@ -245,7 +245,7 @@ PlayerSettings:
   clonedFromGUID: c0afd0d1d80e3634a9dac47e8a0426ea
   templatePackageId: com.unity.template.3d@4.2.8
   templateDefaultScene: Assets/Scenes/SampleScene.unity
-  AndroidTargetArchitectures: 3
+  AndroidTargetArchitectures: 1
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: 
@@ -671,14 +671,15 @@ PlayerSettings:
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
   webGLWasmStreaming: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    7: K
   platformArchitecture: {}
   scriptingBackend:
-    Android: 1
+    Android: 0
   il2cppCompilerConfiguration: {}
   managedStrippingLevel: {}
   incrementalIl2cppBuild: {}
-  allowUnsafeCode: 0
+  allowUnsafeCode: 1
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1
   gcIncremental: 0
@@ -765,4 +766,4 @@ PlayerSettings:
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0
-  legacyClampBlendShapeWeights: 0
+  legacyClampBlendShapeWeights: 1

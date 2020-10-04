@@ -5,12 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
+  - enabled: 1
+    path: Assets/Scenes/InitialScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
     path: Assets/Scenes/MakeDrills.unity
     guid: 27bd3334f2a2f9040b266685c64bde61
+  - enabled: 1
+    path: Assets/Scenes/StartTraining.unity
+    guid: 061ff930092aab2488996a1f4cfc429a
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 9f0e335ad5c1a9d4b837a80109ac329f,
       type: 2}

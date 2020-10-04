@@ -5,31 +5,26 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using TMPro;
-using Firebase;
-using Firebase.Unity.Editor;
-using Firebase.Database;
-using System;
 
 public class MakeDrillManager : MonoBehaviour
 {
 
     public ARTrackedImageManager trackedImageManager;
     public GameObject arSession_Origin;
-    public GameObject arSession;
     public GameObject arCam;
     public GameObject markerPrefab_start;
     public GameObject cntText;
     public GameObject buttons;
-    public GameObject initialGuide;
 
-    public GameObject finishAlert;
+    public GameObject initialGuide; // 훈련생성시작안내창
+    public GameObject finishAlert; // 훈련생성완료안내창
 
     private List<GameObject> markerObjects = new List<GameObject>();
-    private List<Vector3> markersPosition = new List<Vector3>();
-    public List<float> location = new List<float>();
+    private List<Vector3> markersPosition = SingletonManager.markersPosition;
 
     private void Start()
     {
+        markersPosition.RemoveRange(0, markersPosition.Count);
         trackedImageManager.trackedImagesChanged += OnTrackedImageChanged;
     }
     
@@ -44,52 +39,43 @@ public class MakeDrillManager : MonoBehaviour
             {
                 if (markersPosition.Count == 0)
                 {
-                    InitializePosition();
+                    OnQRwasRead();
                 }
             }
         }
 
     }
-
-    public void TrackButtonEvent()
+    
+    public void OnQRwasRead()
     {
         InitializePosition();
+        buttons.SetActive(true);
+        MarkerAdd(markerPrefab_start);
+        initialGuide.SetActive(false);
+        Debug.Log(markersPosition.Count);
     }
 
-    private void InitializePosition()
+    public void InitializePosition()
     {
-        arSession_Origin.transform.position = arCam.transform.position;
-        arSession_Origin.transform.rotation = arCam.transform.rotation;
-
-        buttons.SetActive(true);
-        initialGuide.SetActive(false);
-
-        MarkerAdd(markerPrefab_start);
+        arSession_Origin.transform.Rotate(0, -arCam.transform.rotation.eulerAngles.y, 0);
+        arSession_Origin.transform.position -= arCam.transform.position;
     }
     
     public void MarkerAdd(GameObject mp)
     {
-        
         markersPosition.Add(arCam.transform.position);
-        location.Add(arCam.transform.position.x);
-        location.Add(arCam.transform.position.y);
-        location.Add(arCam.transform.position.z);
-        CreateLocation();
-        markerObjects.Add( Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.3f - Vector3.up * 0.2f), Quaternion.Euler(90, 0, 0) ) );
+        markerObjects.Add( Instantiate(mp, arCam.transform.position, Quaternion.Euler(90, 0, 0) ) );
+
+#if ANDROID
+        Handheld.Vibrate();
+#endif
+
         cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
-        location.RemoveRange(0, 3);
     }
 
     public void MarkerAdd_EndDrill(GameObject mp)
     {
-        markersPosition.Add(arCam.transform.position);
-        location[0] = arCam.transform.position.x;
-        location[1] = arCam.transform.position.y;
-        location[2] = arCam.transform.position.z;
-        CreateLocation();
-        markerObjects.Add(Instantiate(mp, (arCam.transform.position + arCam.transform.forward * 0.3f - Vector3.up*0.2f), Quaternion.Euler(90, 0, 0)));
-
-        cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
+        MarkerAdd(mp);
 
         FinishMakingDrill(markersPosition.Count);
     }
@@ -102,27 +88,16 @@ public class MakeDrillManager : MonoBehaviour
             Destroy(markerObjects[markerObjects.Count - 1]);
             markerObjects.RemoveAt(markerObjects.Count - 1);
             cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
+#if ANDROID
+            Handheld.Vibrate();
+#endif
         }
     }
-
-
+    
     public void FinishMakingDrill(int cnt)
     {
         finishAlert.SetActive(true);
-
     }
+    
 
-    public void Scenemove()
-    {
-        SceneManager.LoadScene("SampleScene");
-    }
-
-    public void CreateLocation()
-    {
-        Debug.Log(TempDrill.code);
-        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://exitraining-3962c.firebaseio.com/");
-        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
-        reference.Child("Location").Child(TempDrill.code).Child((markersPosition.Count-1).ToString()).SetValueAsync(location);
-
-    }
 }
