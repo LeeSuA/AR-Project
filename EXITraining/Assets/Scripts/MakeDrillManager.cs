@@ -78,7 +78,7 @@ public class MakeDrillManager : MonoBehaviour
     public void FireAdd(GameObject mp)
     {
         FiresPosition.Add(arCam.transform.position);
-        fireObjects.Add(Instantiate(mp, arCam.transform.position, Quaternion.Euler(90, 0, 0)));
+        fireObjects.Add(Instantiate(mp, arCam.transform.position - Vector3.up * 1.3f, Quaternion.Euler(0, 0, 0)));
 
 #if ANDROID
         Handheld.Vibrate();
@@ -88,7 +88,7 @@ public class MakeDrillManager : MonoBehaviour
     }
 
     public void MarkerAdd_EndDrill(GameObject mp)
-    {
+    {   
         MarkerAdd(mp);
 
         FinishMakingDrill(markersPosition.Count);
