@@ -20,7 +20,9 @@ public class MakeDrillManager : MonoBehaviour
     public GameObject finishAlert; // 훈련생성완료안내창
 
     private List<GameObject> markerObjects = new List<GameObject>();
+    private List<GameObject> fireObjects = new List<GameObject>();
     private List<Vector3> markersPosition = SingletonManager.markersPosition;
+    private List<Vector3> FiresPosition = SingletonManager.markersPosition;
 
     private void Start()
     {
@@ -65,6 +67,18 @@ public class MakeDrillManager : MonoBehaviour
     {
         markersPosition.Add(arCam.transform.position);
         markerObjects.Add( Instantiate(mp, arCam.transform.position, Quaternion.Euler(90, 0, 0) ) );
+
+#if ANDROID
+        Handheld.Vibrate();
+#endif
+
+        cntText.GetComponent<TMP_Text>().text = markerObjects.Count.ToString();
+    }
+
+    public void FireAdd(GameObject mp)
+    {
+        FiresPosition.Add(arCam.transform.position);
+        fireObjects.Add(Instantiate(mp, arCam.transform.position, Quaternion.Euler(90, 0, 0)));
 
 #if ANDROID
         Handheld.Vibrate();
