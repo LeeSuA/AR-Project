@@ -37,9 +37,9 @@ public class MakeDrillManager : MonoBehaviour
 
         foreach(ARTrackedImage image in addedImages)
         {
-            if (image.referenceImage.name == "QR")
+            if (image.referenceImage.name == "QR" /* && GetComponent<QRReader>().decodedCode == SingletonManager.drillCode */)
             {
-                if (markersPosition.Count == 0)
+                if (markersPosition.Count == 0 )
                 {
                     OnQRwasRead();
                 }
