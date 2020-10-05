@@ -103,15 +103,6 @@ namespace DigitalRuby.PyroParticles
 
             // If we implement the ICollisionHandler interface, see if any of the children are forwarding
             // collision events. If they are, hook into them.
-            ICollisionHandler handler = (this as ICollisionHandler);
-            if (handler != null)
-            {
-                FireCollisionForwardScript collisionForwarder = GetComponentInChildren<FireCollisionForwardScript>();
-                if (collisionForwarder != null)
-                {
-                    collisionForwarder.CollisionHandler = handler;
-                }
-            }
         }
 
         protected virtual void Update()
