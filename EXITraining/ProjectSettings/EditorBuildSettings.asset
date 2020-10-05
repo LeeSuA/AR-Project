@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/Scenes/ExtinguisherTest.unity
     guid: 111ce6dd29493aa478825f04d0b3bf60
   m_configObjects:
-    com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: 058a9d9f13918f243bd1ea0277381bcd,
+    UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 058a9d9f13918f243bd1ea0277381bcd,
       type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 9f0e335ad5c1a9d4b837a80109ac329f,
       type: 2}
