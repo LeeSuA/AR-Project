@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Firebase.Auth;
 
 public class SingletonManager : MonoBehaviour
 {
+    private FirebaseAuth auth;
     static SingletonManager current = null;
     static GameObject container = null;
 
@@ -25,5 +27,6 @@ public class SingletonManager : MonoBehaviour
 
     public static List<Vector3> markersPosition = new List<Vector3>();
     public static string drillCode = null;
+    public static string uID = null;
     
 }

@@ -5,19 +5,27 @@ using Firebase.Unity.Editor;
 using Firebase;
 using Firebase.Database;
 using TMPro;
-
-public class CreateCode : MonoBehaviour
+public class test : MonoBehaviour
 {
-    public GameObject input;
-    private string code;
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+   
+
 
     public void CreateDB()
     {
-        code = input.GetComponent<TMP_Text>().text;
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://exitraining-3962c.firebaseio.com/");
         DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
-        reference.Child("DrillCode").Child(code).Child("checkpoint").SetValueAsync("null");
-        reference.Child("DrillCode").Child(code).Child("firepoint").SetValueAsync("null");
+        reference.Child("User").SetValueAsync("null");
 
     }
 }

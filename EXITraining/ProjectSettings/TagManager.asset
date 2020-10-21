@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - InputField
+  - menu
+  - LogIn
   layers:
   - Default
   - TransparentFX
