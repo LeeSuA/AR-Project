@@ -21,8 +21,8 @@ public class MakeDrillManager : MonoBehaviour
 
     private List<GameObject> markerObjects = new List<GameObject>();
     private List<GameObject> fireObjects = new List<GameObject>();
-    private List<Vector3> markersPosition = SingletonManager.markersPosition;
-    private List<Vector3> FiresPosition = SingletonManager.markersPosition;
+
+    private List<Vector4> markersPosition = SingletonManager.markersPosition;
 
     private void Start()
     {
@@ -77,7 +77,9 @@ public class MakeDrillManager : MonoBehaviour
 
     public void FireAdd(GameObject mp)
     {
-        FiresPosition.Add(arCam.transform.position);
+        Vector3 addingPos = arCam.transform.position;
+        Vector4 firePosition = new Vector4(addingPos.x, addingPos.y, addingPos.z, 1);
+        markersPosition.Add(firePosition);
         fireObjects.Add(Instantiate(mp, arCam.transform.position - Vector3.up * 1.3f, Quaternion.Euler(0, 0, 0)));
 
 #if ANDROID

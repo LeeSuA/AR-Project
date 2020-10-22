@@ -18,7 +18,7 @@ public class StartNavigate : MonoBehaviour
     public GameObject completed; // 훈련종료안내창
 
 
-    private List<Vector3> markersPosition = SingletonManager.markersPosition; //마커 위치정보 리스트
+    private List<Vector4> markersPosition = SingletonManager.markersPosition; //마커 위치정보 리스트
     private List<GameObject> markerObjects = new List<GameObject>();
     public Vector3 nextPosition; //다음 추적할 포인트의 위치값
     public int markerCount = 0; //markersPosition의 인덱스
