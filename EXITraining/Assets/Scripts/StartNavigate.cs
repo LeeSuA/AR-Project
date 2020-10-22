@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using TMPro;
 
 public class StartNavigate : MonoBehaviour
 {
@@ -17,14 +18,14 @@ public class StartNavigate : MonoBehaviour
     public GameObject initialGuide; // 훈련시작안내창
     public GameObject completed; // 훈련종료안내창
 
-
     private List<Vector4> markersPosition = SingletonManager.markersPosition; //마커 위치정보 리스트
     private List<GameObject> markerObjects = new List<GameObject>();
+
+    // for Navigation
     public Vector3 nextPosition; //다음 추적할 포인트의 위치값
     public int markerCount = 0; //markersPosition의 인덱스
 
-
-    bool qrRead = false;
+    bool qrWasRead = false;
 
     private void Start()
     {
@@ -40,18 +41,22 @@ public class StartNavigate : MonoBehaviour
         {
             if (image.referenceImage.name == "QR")
             {
-                if (markersPosition.Count == 0)
+                if (!qrWasRead && markersPosition.Count == 0)
                 {
-                    OnQRwasRead();
+                    OnQRwasRecognized();
                 }
             }
         }
 
     }
 
-    public void OnQRwasRead()
+    public void OnQRwasRecognized()
     {
-        qrRead = true;
+    }
+
+    public void QRisCorrect()
+    {
+        qrWasRead = true;
         MarkersAdd();
         arrow.SetActive(true);
         initialGuide.SetActive(false);
@@ -75,8 +80,9 @@ public class StartNavigate : MonoBehaviour
 
     void Update()
     {
+
         // 마커 비어있는 경우 예외
-        if (markersPosition == null || !qrRead)
+        if (markersPosition == null || !qrWasRead)
         {
             return;
         }

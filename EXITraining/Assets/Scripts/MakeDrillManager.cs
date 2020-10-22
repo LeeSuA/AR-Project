@@ -5,11 +5,15 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using TMPro;
+using BarcodeScanner;
+using BarcodeScanner.Scanner;
+using UnityEngine.UI;
 
 public class MakeDrillManager : MonoBehaviour
 {
 
     public ARTrackedImageManager trackedImageManager;
+    public GameObject arSession;
     public GameObject arSession_Origin;
     public GameObject arCam;
     public GameObject markerPrefab_start;
@@ -19,6 +23,10 @@ public class MakeDrillManager : MonoBehaviour
     public GameObject initialGuide; // 훈련생성시작안내창
     public GameObject finishAlert; // 훈련생성완료안내창
 
+    private IScanner codeScanner;
+    public TMP_Text qrText = null;
+    public RawImage image;
+
     private List<GameObject> markerObjects = new List<GameObject>();
     private List<GameObject> fireObjects = new List<GameObject>();
 
@@ -26,35 +34,70 @@ public class MakeDrillManager : MonoBehaviour
 
     private void Start()
     {
+        // for QR Read
+        arSession_Origin.SetActive(false);
+        arSession.SetActive(false);
+
+        codeScanner = new Scanner();
+        codeScanner.Camera.Play();
+        codeScanner.OnReady += StartReadingQR;
+        //
         markersPosition.RemoveRange(0, markersPosition.Count);
-        trackedImageManager.trackedImagesChanged += OnTrackedImageChanged;
     }
     
-    private void OnTrackedImageChanged(ARTrackedImagesChangedEventArgs args)
+    private void Update()
     {
-        List<ARTrackedImage> addedImages = args.added;
-        List<ARTrackedImage> removedImages = args.removed;
-
-        foreach(ARTrackedImage image in addedImages)
+        // QR Reader의 Update
+        if (codeScanner != null)
         {
-            if (image.referenceImage.name == "QR" /* && GetComponent<QRReader>().decodedCode == SingletonManager.drillCode */)
-            {
-                if (markersPosition.Count == 0 )
-                {
-                    OnQRwasRead();
-                }
-            }
+            codeScanner.Update();
         }
+        else
+        {
+            qrText.text = "null";
+        }
+    }
+
+    public void StartReadingQR(object sender, System.EventArgs e)
+    {
+        // Set Orientation & Texture
+        image.transform.localEulerAngles = codeScanner.Camera.GetEulerAngles();
+        image.transform.localScale = codeScanner.Camera.GetScale();
+        image.texture = codeScanner.Camera.Texture;
+        image.transform.localScale = new Vector3((float)Screen.height / (float)Screen.width, (float)Screen.width / (float)Screen.height, 1);
+        image.transform.localEulerAngles = new Vector3(0,0,-90);
+
+        scanCode();
+
+        //Keep Image Aspect Ratio
+        var rect = image.GetComponent<RectTransform>();
+        var newHeight = rect.sizeDelta.x * codeScanner.Camera.Height / codeScanner.Camera.Width;
+        rect.sizeDelta = new Vector2(rect.sizeDelta.x, newHeight);
 
     }
-    
-    public void OnQRwasRead()
+
+    private void scanCode()
     {
+        codeScanner.Scan((barCodeType, barCodeValue) => {
+
+            codeScanner.Stop();
+            if (barCodeValue == SingletonManager.drillCode)
+            {
+                qrText.text = barCodeValue;
+                QRisCorrect();
+            }
+        });
+    }
+
+    private void QRisCorrect()
+    {
+        initialGuide.SetActive(false);
+        arSession_Origin.SetActive(true);
+        arSession.SetActive(true);
         InitializePosition();
         buttons.SetActive(true);
         MarkerAdd(markerPrefab_start);
-        initialGuide.SetActive(false);
-        Debug.Log(markersPosition.Count);
+        Destroy(image);
     }
 
     public void InitializePosition()

@@ -24,4 +24,4 @@ MonoBehaviour:
     m_Size: {x: 0.15, y: 0.15}
     m_SpecifySize: 1
     m_Name: QR
-    m_Texture: {fileID: 2800000, guid: 850e1fb4c8fc86348879b5d734b7eca3, type: 3}
+    m_Texture: {fileID: 0}
