@@ -23,7 +23,7 @@ public class FE_Setting : MonoBehaviour
     IEnumerator SettingCoroutine()
     {
         this.gameObject.SetActive(true);
-        while (settingExtinguisher && this.transform.localPosition.y <= -0.417f)
+        while (settingExtinguisher && this.transform.localPosition.y <= -0.02f)
         {
             this.transform.Translate(Vector3.up * Time.deltaTime);
             yield return null;
@@ -32,7 +32,7 @@ public class FE_Setting : MonoBehaviour
 
     IEnumerator EliminatingCoroutine()
     {
-        while (!settingExtinguisher && this.transform.localPosition.y >= -1f)
+        while (!settingExtinguisher && this.transform.localPosition.y >= -0.3f)
         {
             this.transform.Translate(Vector3.up * -Time.deltaTime);
             yield return null;

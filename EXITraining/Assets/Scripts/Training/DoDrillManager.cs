@@ -67,48 +67,14 @@ public class DoDrillManager : MonoBehaviour
     
     private void ScannerUpdate()
     {
-        if (codeScanner != null) codeScanner.Update();
+        if (!qrWasRead) codeScanner.Update();
+        else return;
     }
 
-    private void Set_Arrow_FE_Positions()
-    {
-        fireExtinguisher.transform.parent.position = Vector3.Lerp(fireExtinguisher.transform.parent.position, arCam.transform.position + arCam.transform.forward * 0.4f - arCam.transform.up * 0.2f, 0.4f);
-        arrow.transform.position = Vector3.Lerp(arrow.transform.position, arCam.transform.position + arCam.transform.forward * 0.4f - arCam.transform.up * 0.2f, 0.4f);
-        arrow.transform.LookAt(nextPosition);
-    }
-
-
-    private void FireExtinguishEvent()
-    {
-        if (Vector3.Distance(arCam.transform.position, nextPosition) <= 3.2f) // 불에 가까이 갔을 때.
-        {
-            arrow.SetActive(false);
-            if (!fireExtinguisher.activeSelf) extinguisherSetting.Set();
-            if (Extiguish())
-            {
-                UpdateNextPoint();
-                if (fireExtinguisher.activeSelf) extinguisherSetting.Eliminate();
-            }
-        }
-        else
-        {
-            if (fireExtinguisher.activeSelf) extinguisherSetting.Eliminate();
-            arrow.SetActive(true);
-        }
-    }
-
-    private void NextIsCheckPoint()
-    {
-        if (fireExtinguisher.activeSelf) extinguisherSetting.Eliminate();
-        arrow.SetActive(true);
-        if (Vector3.Distance(arCam.transform.position, nextPosition) <= 0.7f)
-        {
-            UpdateNextPoint();
-        }
-    }
 
     void Update()
     {
+
         ScannerUpdate();
 
         // 마커 비어있거나 QR이 아직 안읽힌 경우
@@ -133,8 +99,40 @@ public class DoDrillManager : MonoBehaviour
         if (markerCount == markersPosition.Count)
         {
             completed.SetActive(true);
+            arrow.SetActive(false);
+        }
+        // AR 트래킹 튀는현상 완화
+        TrackingAccuration(0.8f);
+
+    }
+    // for tracking accuracy
+    Vector3 pos_last = Vector3.zero;
+    Vector3 pos_now = Vector3.zero;
+    float rot_last = 0;
+    float rot_now = 0;
+
+    private void TrackingAccuration(float accuracy)
+    {
+        // rotation - y축만 고려
+        rot_now = arCam.transform.rotation.eulerAngles.y;
+        float rot_dif = rot_now - rot_last;
+        if (Mathf.Abs(rot_dif) > 90 && Mathf.Abs(rot_dif) < 270)
+        {
+            arSession_Origin.transform.Rotate(0, -rot_dif, 0);
+        }
+        //
+        
+        // position
+        pos_now = arCam.transform.position;
+        Vector3 pos_dif = pos_now - pos_last;
+        if (pos_dif.magnitude > accuracy)
+        {
+            Debug.Log(pos_dif.magnitude);
+            arSession_Origin.transform.position -= pos_dif;
         }
 
+        pos_last = arCam.transform.position;
+        rot_last = arCam.transform.rotation.eulerAngles.y;
     }
 
     private void StartReadingQR(object sender, System.EventArgs e)
@@ -176,7 +174,7 @@ public class DoDrillManager : MonoBehaviour
         arSession_Origin.SetActive(true);
         arSession.SetActive(true);
         initialGuide.SetActive(false);
-        //InitializePosition();
+        InitializePosition();
         Destroy(image);
         qrWasRead = true;
 
@@ -203,14 +201,49 @@ public class DoDrillManager : MonoBehaviour
         {
             if (markersPosition[i].w == 0)
             {
-                Debug.Log(markersPosition);
                 markerObjects.Add(Instantiate(points, markersPosition[i], Quaternion.Euler(90, 0, 0)));
             }
             else
             {
-                Debug.Log(markersPosition);
                 markerObjects.Add(Instantiate(fires, markersPosition[i], Quaternion.Euler(0, 0, 0)));
             }
+        }
+    }
+
+    private void Set_Arrow_FE_Positions()
+    {
+        fireExtinguisher.transform.parent.position = Vector3.Lerp(fireExtinguisher.transform.parent.position, arCam.transform.position + arCam.transform.forward * 0.4f - arCam.transform.up * 0.2f, 0.4f);
+        fireExtinguisher.transform.parent.rotation = arCam.transform.rotation;
+        arrow.transform.position = Vector3.Lerp(arrow.transform.position, arCam.transform.position + arCam.transform.forward * 0.4f - arCam.transform.up * 0.2f, 0.4f);
+        arrow.transform.LookAt(nextPosition);
+    }
+
+    private void FireExtinguishEvent()
+    {
+        if (Vector3.Distance(arCam.transform.position, nextPosition) <= 3.2f) // 불에 가까이 갔을 때.
+        {
+            arrow.SetActive(false);
+            if (!fireExtinguisher.activeSelf) extinguisherSetting.Set();
+            if (Extiguish())
+            {
+                UpdateNextPoint();
+                if (fireExtinguisher.activeSelf) extinguisherSetting.Eliminate();
+            }
+        }
+        else
+        {
+            if (fireExtinguisher.activeSelf) extinguisherSetting.Eliminate();
+            arrow.SetActive(true);
+        }
+    }
+
+    private void NextIsCheckPoint()
+    {
+        if (fireExtinguisher.activeSelf) extinguisherSetting.Eliminate();
+        arrow.SetActive(true);
+        if (Vector3.Distance(arCam.transform.position, nextPosition) <= 0.7f)
+        {
+            UpdateNextPoint();
         }
     }
 

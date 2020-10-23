@@ -27,6 +27,9 @@ public class MakeDrillManager : MonoBehaviour
     public TMP_Text qrText;
     public RawImage image;
 
+    [SerializeField]
+    bool qrWasRead = false;
+
     private List<GameObject> markerObjects = new List<GameObject>();
 
     private List<Vector4> markersPosition = SingletonManager.markersPosition;
@@ -44,18 +47,15 @@ public class MakeDrillManager : MonoBehaviour
 
         markersPosition.RemoveRange(0, markersPosition.Count);
     }
-    
+    private void ScannerUpdate()
+    {
+        if (!qrWasRead) codeScanner.Update();
+        else return;
+    }
+
     private void Update()
     {
-        // QR Reader의 Update
-        if (codeScanner != null)
-        {
-            codeScanner.Update();
-        }
-        else
-        {
-            qrText.text = "null";
-        }
+        ScannerUpdate();
     }
 
     private void StartReadingQR(object sender, System.EventArgs e)
@@ -114,10 +114,11 @@ public class MakeDrillManager : MonoBehaviour
         arSession_Origin.SetActive(true);
         arSession.SetActive(true);
         initialGuide.SetActive(false);
-        //InitializePosition();
+        InitializePosition();
         Destroy(image);
         buttons.SetActive(true);
         MarkerAdd(markerPrefab_start);
+        qrWasRead = true;
     }
 
     public void InitializePosition()

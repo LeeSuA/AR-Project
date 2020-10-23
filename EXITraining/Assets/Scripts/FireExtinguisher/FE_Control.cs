@@ -134,11 +134,11 @@ public class FE_Control : MonoBehaviour, IDragHandler, IPointerDownHandler, IEnd
     IEnumerator PinOut()
     {
         Material mat = pin.GetComponent<MeshRenderer>().material;
-        Vector3 pin_firstPosition = pin.transform.position;
+        Vector3 pin_firstPosition = pin.localPosition;
         while (mat.color.a >= 0.0001f)
         {
             mat.color = (new Color(0, 0, 0, mat.color.a - Time.deltaTime * 2));
-            pin.position = Vector3.Lerp(pin.transform.position, pin_firstPosition - Vector3.right * 0.2f, 0.1f);
+            pin.localPosition = Vector3.Lerp(pin.localPosition, pin_firstPosition - Vector3.right * 0.05f, 0.1f);
             yield return null;
         }
         if(mat.color.a <= 0.0001f)
