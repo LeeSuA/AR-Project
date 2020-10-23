@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Wizcorp.Utils.Logger;
 
 namespace BarcodeScanner.Webcam
@@ -23,7 +23,6 @@ namespace BarcodeScanner.Webcam
 			Webcam.requestedWidth = settings.WebcamRequestedWidth;
 			Webcam.requestedHeight = settings.WebcamRequestedHeight;
 			Webcam.filterMode = settings.WebcamFilterMode;
-			Webcam.requestedFPS = 60;
 
 			// Get size
 			Width = 0;
