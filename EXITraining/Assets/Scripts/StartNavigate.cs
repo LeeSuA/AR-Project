@@ -98,9 +98,7 @@ public class StartNavigate : MonoBehaviour
         if (markerCount == markersPosition.Count)
         {
             completed.SetActive(true);
-            bool check = false;
-            FirebaseGoogleAuth SetScore = new FirebaseGoogleAuth();
-            SetScore.checkDrillCode();
+            FirebaseGoogleAuth.checkDrillCode();
         }
 
         Navigate(nextPosition);

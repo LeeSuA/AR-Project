@@ -15,17 +15,14 @@ public class FirebaseGoogleAuth : MonoBehaviour
 {
     FirebaseAuth auth;
     FirebaseUser user;//사용자 계정
-    private DataSnapshot dataSnapshot=null;
+    private static DataSnapshot dataSnapshot=null;
     public GameObject googleText;
     public GameObject ranking;
     public GameObject LogOut;
-    public TMP_Text debText;
-    int score;
-    string code;
-    string uid;
 
     private void Awake()
     {
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://exitraining-3962c.firebaseio.com/");
         Debug.Log("Setting up Firebase Auth");
         auth = FirebaseAuth.DefaultInstance;
         auth.StateChanged += AuthStateChanged;
@@ -112,7 +109,6 @@ public class FirebaseGoogleAuth : MonoBehaviour
         while (string.IsNullOrEmpty(((PlayGamesLocalUser)Social.localUser).GetIdToken()))
             yield return null;
         string idToken = ((PlayGamesLocalUser)Social.localUser).GetIdToken();
-        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://exitraining-3962c.firebaseio.com/");
         DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
 
         Credential credential = GoogleAuthProvider.GetCredential(idToken, null);
@@ -127,17 +123,14 @@ public class FirebaseGoogleAuth : MonoBehaviour
                 Debug.LogError("SignInWithCredentialAsync encountered an error: " + task.Exception);
                 return;
             }
-
             Debug.Log("Success!");
             auth = FirebaseAuth.DefaultInstance;
             user = auth.CurrentUser;
             SingletonManager.uID = user.UserId;
-            reference.Child("User").Child(SingletonManager.uID).Child("score").SetValueAsync(0);
-
         });
     }
     // 리더보드에 점수등록
-    public void ReportLeaderBoard(int score)
+    public static void ReportLeaderBoard(int score)
     {
        
         // 1000점을 등록
@@ -158,9 +151,8 @@ public class FirebaseGoogleAuth : MonoBehaviour
         
 
     }
-    public void checkDrillCode()
+    public static void checkDrillCode()
     {
-        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://exitraining-3962c.firebaseio.com/");
         DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
         DataSnapshot compareCode = null;
         if (dataSnapshot != null)
@@ -176,7 +168,7 @@ public class FirebaseGoogleAuth : MonoBehaviour
                 compareCode = dataSnapshot.Child("User").Child(SingletonManager.uID).Child("completeDrills").Child(SingletonManager.drillCode);
                 if (!compareCode.Exists)
                 {
-                    score = (int)dataSnapshot.Child("User").Child(SingletonManager.uID).Child("score").Value;
+                    int score = (int)dataSnapshot.Child("User").Child(SingletonManager.uID).Child("score").Value;
                     score += 10;
                     reference.Child("User").Child(SingletonManager.uID).Child("score").SetValueAsync(score);
                     reference.Child("User").Child(SingletonManager.uID).Child("completeDrills").Child(SingletonManager.drillCode);
