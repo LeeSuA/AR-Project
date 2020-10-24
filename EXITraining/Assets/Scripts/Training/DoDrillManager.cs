@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using BarcodeScanner;
 using BarcodeScanner.Scanner;
 
@@ -24,7 +23,6 @@ public class DoDrillManager : MonoBehaviour
     
     // for QR
     private IScanner codeScanner;
-    public TMP_Text qrText;
     public RawImage image;
 
     private List<Vector4> markersPosition = SingletonManager.markersPosition; //마커 위치정보 리스트
@@ -42,17 +40,6 @@ public class DoDrillManager : MonoBehaviour
     [SerializeField]
     float fireLife = 5f;
     float fireMaxLife = 5f;
-
-    public void QuickCheckPointAdd()
-    {
-        markersPosition.RemoveRange(0, markersPosition.Count - 1);
-        markersPosition.Add(new Vector4(1, 0, 0, 0));
-        markersPosition.Add(new Vector4(2, 0, 0, 0));
-        markersPosition.Add(new Vector4(3, 0, 1, 0));
-        markersPosition.Add(new Vector4(4, 0, 2, 1));
-        markersPosition.Add(new Vector4(5, 0, 3, 0));
-        markersPosition.Add(new Vector4(5, 0, 4, 0));
-    }
 
     private void Start()
     {
@@ -78,9 +65,17 @@ public class DoDrillManager : MonoBehaviour
         ScannerUpdate();
 
         // 마커 비어있거나 QR이 아직 안읽힌 경우
-        if (markersPosition == null || !qrWasRead)
+        if (markerObjects == null || !qrWasRead)
         {
             return;
+        }
+
+        if (markerCount < markerObjects.Count)
+        {
+            if (!markerObjects[markerCount].activeSelf)
+            {
+                markerObjects[markerCount].SetActive(true);
+            }
         }
 
         Set_Arrow_FE_Positions();
@@ -102,7 +97,7 @@ public class DoDrillManager : MonoBehaviour
             arrow.SetActive(false);
         }
         // AR 트래킹 튀는현상 완화
-        TrackingAccuration(0.8f);
+        TrackingAccuration(0.6f);
 
     }
     // for tracking accuracy
@@ -148,11 +143,7 @@ public class DoDrillManager : MonoBehaviour
         rect.sizeDelta = new Vector2(Screen.height, Screen.height / cameraRatio);
         Debug.Log(rect.localScale);
         image.transform.localEulerAngles = new Vector3(0, 0, -90);
-
-        qrText.text = "스크린 : " + Screen.width + " x " + Screen.height + "\n";
-        qrText.text += "카메라 : " + codeScanner.Camera.Width + " x " + codeScanner.Camera.Height + "\n";
-        qrText.text += "패널 : " + rect.sizeDelta.y + " x " + rect.sizeDelta.x + "\n";
-
+        
         ScanCode();
 
     }
@@ -162,7 +153,6 @@ public class DoDrillManager : MonoBehaviour
         codeScanner.Scan((barCodeType, barCodeValue) => {
 
             codeScanner.Stop();
-            qrText.text = barCodeValue;
             QRisRead();
 
         });
@@ -175,7 +165,7 @@ public class DoDrillManager : MonoBehaviour
         arSession.SetActive(true);
         initialGuide.SetActive(false);
         InitializePosition();
-        Destroy(image);
+        image.gameObject.SetActive(false);
         qrWasRead = true;
 
         MarkersAdd();
@@ -207,12 +197,13 @@ public class DoDrillManager : MonoBehaviour
             {
                 markerObjects.Add(Instantiate(fires, markersPosition[i], Quaternion.Euler(0, 0, 0)));
             }
+            markerObjects[i].SetActive(false);
         }
     }
 
     private void Set_Arrow_FE_Positions()
     {
-        fireExtinguisher.transform.parent.position = Vector3.Lerp(fireExtinguisher.transform.parent.position, arCam.transform.position + arCam.transform.forward * 0.4f - arCam.transform.up * 0.2f, 0.4f);
+        fireExtinguisher.transform.parent.position = arCam.transform.position + arCam.transform.forward * 0.4f - arCam.transform.up * 0.3f;
         fireExtinguisher.transform.parent.rotation = arCam.transform.rotation;
         arrow.transform.position = Vector3.Lerp(arrow.transform.position, arCam.transform.position + arCam.transform.forward * 0.4f - arCam.transform.up * 0.2f, 0.4f);
         arrow.transform.LookAt(nextPosition);
@@ -240,7 +231,6 @@ public class DoDrillManager : MonoBehaviour
     private void NextIsCheckPoint()
     {
         if (fireExtinguisher.activeSelf) extinguisherSetting.Eliminate();
-        arrow.SetActive(true);
         if (Vector3.Distance(arCam.transform.position, nextPosition) <= 0.7f)
         {
             UpdateNextPoint();
@@ -252,6 +242,7 @@ public class DoDrillManager : MonoBehaviour
         fireLife = fireMaxLife;
         if (markerCount+1 < markersPosition.Count)
         {
+            arrow.SetActive(true);
             markerObjects[markerCount].SetActive(true);
             nextPosition = markersPosition[markerCount + 1];
             if (markersPosition[markerCount + 1].w == 1) nextisFire = true;
@@ -283,7 +274,6 @@ public class DoDrillManager : MonoBehaviour
             Debug.Log("소화중");
             fireLife -= Time.deltaTime * 3f;
             Material mat = fireParticle.GetComponent<ParticleSystemRenderer>().material;
-            Debug.Log(mat.GetColor("_TintColor"));
             mat.SetColor("_TintColor", new Color(1,1,1, fireLife/fireMaxLife));
         }
         if (fireLife <= 0f) return true;

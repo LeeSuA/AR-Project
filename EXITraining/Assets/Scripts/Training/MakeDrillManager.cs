@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
-using TMPro;
 using BarcodeScanner;
 using BarcodeScanner.Scanner;
 using UnityEngine.UI;
+using TMPro;
 
 public class MakeDrillManager : MonoBehaviour
 {
@@ -24,7 +24,6 @@ public class MakeDrillManager : MonoBehaviour
 
     // for QR
     private IScanner codeScanner;
-    public TMP_Text qrText;
     public RawImage image;
 
     [SerializeField]
@@ -72,10 +71,6 @@ public class MakeDrillManager : MonoBehaviour
         Debug.Log(rect.localScale);
         image.transform.localEulerAngles = new Vector3(0,0,-90);
 
-        qrText.text = "스크린 : " + Screen.width + " x " + Screen.height + "\n";
-        qrText.text += "카메라 : " + codeScanner.Camera.Width + " x " + codeScanner.Camera.Height + "\n";
-        qrText.text += "패널 : " + rect.sizeDelta.y +" x " + rect.sizeDelta.x + "\n";
-
     }
 
     public void ScanCode()
@@ -95,7 +90,6 @@ public class MakeDrillManager : MonoBehaviour
                 StartCoroutine(wait());
             }
             */
-            qrText.text = barCodeValue;
             QRisCorrect();
         });
     }
@@ -115,7 +109,7 @@ public class MakeDrillManager : MonoBehaviour
         arSession.SetActive(true);
         initialGuide.SetActive(false);
         InitializePosition();
-        Destroy(image);
+        image.gameObject.SetActive(false);
         buttons.SetActive(true);
         MarkerAdd(markerPrefab_start);
         qrWasRead = true;
