@@ -5,9 +5,11 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using Firebase.Auth;
 
 public class StartNavigate : MonoBehaviour
 {
+    FirebaseAuth auth;
     public ARTrackedImageManager trackedImageManager;
     public GameObject arSession_Origin;
     public GameObject arCam;
@@ -28,6 +30,7 @@ public class StartNavigate : MonoBehaviour
 
     private void Start()
     {
+        auth =FirebaseAuth.DefaultInstance;
         trackedImageManager.trackedImagesChanged += OnTrackedImageChanged;
     }
 
@@ -95,6 +98,9 @@ public class StartNavigate : MonoBehaviour
         if (markerCount == markersPosition.Count)
         {
             completed.SetActive(true);
+            bool check = false;
+            FirebaseGoogleAuth SetScore = new FirebaseGoogleAuth();
+            SetScore.checkDrillCode();
         }
 
         Navigate(nextPosition);

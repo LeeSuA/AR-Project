@@ -5,16 +5,33 @@ using UnityEngine.UI;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using Firebase.Auth;
-
+using Firebase.Database;
+using Firebase;
+using Firebase.Unity.Editor;
+using System.Threading.Tasks;
+using Google;
+using TMPro;
 public class FirebaseGoogleAuth : MonoBehaviour
 {
-    private FirebaseAuth auth;
+    FirebaseAuth auth;
+    FirebaseUser user;//사용자 계정
+    private DataSnapshot dataSnapshot=null;
     public GameObject googleText;
     public GameObject ranking;
     public GameObject LogOut;
-    bool bWait = false;
+    public TMP_Text debText;
+    int score;
+    string code;
+    string uid;
 
-        void Start()
+    private void Awake()
+    {
+        Debug.Log("Setting up Firebase Auth");
+        auth = FirebaseAuth.DefaultInstance;
+        auth.StateChanged += AuthStateChanged;
+        AuthStateChanged(this, null);
+    }
+    void Start()
     {
         PlayGamesPlatform.InitializeInstance(new PlayGamesClientConfiguration.Builder()
           .RequestIdToken()
@@ -26,9 +43,38 @@ public class FirebaseGoogleAuth : MonoBehaviour
 
         auth = FirebaseAuth.DefaultInstance; // Firebase 액세스
     }
+    void AuthStateChanged(object sender, System.EventArgs eventArgs)
+    {
+        if (auth.CurrentUser != user)
+        {
+           bool signedIn = user != auth.CurrentUser && auth.CurrentUser != null;
+            if (!signedIn && user != null)
+            {
+                Debug.Log("Signed out" + user.UserId);
+            }
+            user = auth.CurrentUser;
+            if (signedIn)
+            {
+                Debug.Log("Signed In" + user.UserId);
+            }
+        }
+    }
+    private void init()
+    { 
+         FirebaseDatabase.DefaultInstance.GetReference("User").ValueChanged += HandleValueChanged;
+    }
+    void HandleValueChanged(object sender, ValueChangedEventArgs args)
+    {
+        if(args.DatabaseError != null)
+        {
+            Debug.LogError(args.DatabaseError.Message);
+            return;
+        }
+    }
 
   public void TryGoogleLogin()
     {
+       
         if (!Social.localUser.authenticated) // 로그인 되어 있지 않다면
         {
             Social.localUser.Authenticate(success => // 로그인 시도
@@ -36,10 +82,11 @@ public class FirebaseGoogleAuth : MonoBehaviour
                 if (success) // 성공하면
                 {
                     Debug.Log("Success");
+                    StartCoroutine(TryFirebaseLogin()); // Firebase Login 시도
                     googleText.SetActive(false);
                     ranking.SetActive(true);
                     LogOut.SetActive(true);
-                    StartCoroutine(TryFirebaseLogin()); // Firebase Login 시도
+
                 }
                 else // 실패하면
                 {
@@ -65,7 +112,8 @@ public class FirebaseGoogleAuth : MonoBehaviour
         while (string.IsNullOrEmpty(((PlayGamesLocalUser)Social.localUser).GetIdToken()))
             yield return null;
         string idToken = ((PlayGamesLocalUser)Social.localUser).GetIdToken();
-
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://exitraining-3962c.firebaseio.com/");
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
 
         Credential credential = GoogleAuthProvider.GetCredential(idToken, null);
         auth.SignInWithCredentialAsync(credential).ContinueWith(task => {
@@ -81,15 +129,19 @@ public class FirebaseGoogleAuth : MonoBehaviour
             }
 
             Debug.Log("Success!");
+            auth = FirebaseAuth.DefaultInstance;
+            user = auth.CurrentUser;
+            SingletonManager.uID = user.UserId;
+            reference.Child("User").Child(SingletonManager.uID).Child("score").SetValueAsync(0);
+
         });
     }
-    // 리더보드에 점수등록 후 보기
-    public void ReportLeaderBoard()
+    // 리더보드에 점수등록
+    public void ReportLeaderBoard(int score)
     {
-        
-
+       
         // 1000점을 등록
-        Social.ReportScore(1000, "CgkIjezStN4VEAIQBA", (bool bSuccess) =>
+        Social.ReportScore(score, "CgkIjezStN4VEAIQBA", (bool bSuccess) =>
         {
             if (bSuccess)
             {
@@ -103,15 +155,45 @@ public class FirebaseGoogleAuth : MonoBehaviour
             }
         }
         );
-        doLeaderboardShow();
-
+        
 
     }
- public void doLeaderboardShow()
+    public void checkDrillCode()
     {
-       
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://exitraining-3962c.firebaseio.com/");
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+        DataSnapshot compareCode = null;
+        if (dataSnapshot != null)
+        {
+            compareCode = dataSnapshot.Child("User").Child(SingletonManager.uID);
+            if (!compareCode.Exists)
+            {
+                reference.Child("User").Child(SingletonManager.uID).Child("score").SetValueAsync(10);
+                ReportLeaderBoard(10);
+            }
+            else
+            {
+                compareCode = dataSnapshot.Child("User").Child(SingletonManager.uID).Child("completeDrills").Child(SingletonManager.drillCode);
+                if (!compareCode.Exists)
+                {
+                    score = (int)dataSnapshot.Child("User").Child(SingletonManager.uID).Child("score").Value;
+                    score += 10;
+                    reference.Child("User").Child(SingletonManager.uID).Child("score").SetValueAsync(score);
+                    reference.Child("User").Child(SingletonManager.uID).Child("completeDrills").Child(SingletonManager.drillCode);
+                    ReportLeaderBoard(score);
+                }
+
+            }
+        }
+    }
+    public void doLeaderboardShow()
+    {   
         Social.ShowLeaderboardUI();
     }
+    void OnDestroy()
+    {
+        auth.StateChanged -= AuthStateChanged;
+        auth = null;
+    }
 
-  
 }
