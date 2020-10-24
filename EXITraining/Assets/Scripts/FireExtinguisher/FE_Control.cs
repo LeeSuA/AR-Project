@@ -13,12 +13,13 @@ public class FE_Control : MonoBehaviour, IDragHandler, IPointerDownHandler, IEnd
     public Transform pin;
     public Transform body;
     public Transform handle;
+    public Transform FE_parent;
     public ParticleSystem Extinguisher_Particle;
 
     RaycastHit firstHit;
 
     [SerializeField]
-    bool handle_is_touched = false;
+    public bool handle_is_touched = false;
     bool somethingHit = false;
     bool pinOut = false;
     
@@ -73,14 +74,14 @@ public class FE_Control : MonoBehaviour, IDragHandler, IPointerDownHandler, IEnd
             // 소화기 회전
             if (firstHit.transform.tag == "Body")
             {
-                body.transform.parent.transform.Rotate(Vector3.up * deltaX * 30f, Space.Self);
+                FE_parent.Rotate(Vector3.up * deltaX * 70f, Space.Self);
             }
             // 핀 뽑기
             else if (!pinOut && firstHit.transform.tag == "Pin")
             {
                 // if (pin.transform.position.x >= 0 && deltaX < 0) deltaX = 0; // 위치제한
 
-                if (body.transform.parent.transform.rotation.y < 90 && body.transform.parent.transform.rotation.y > -90)
+                if (FE_parent.rotation.y < 90 && FE_parent.rotation.y > -90)
                 {
                     if (pin.transform.position.x - deltaX > 0) pin.transform.Translate(Vector3.left * pin.transform.position.x * 0.4f);
                     else pin.transform.Translate(Vector3.left * deltaX, Space.Self);
@@ -133,11 +134,11 @@ public class FE_Control : MonoBehaviour, IDragHandler, IPointerDownHandler, IEnd
     IEnumerator PinOut()
     {
         Material mat = pin.GetComponent<MeshRenderer>().material;
-        Vector3 pin_firstPosition = pin.transform.position;
+        Vector3 pin_firstPosition = pin.localPosition;
         while (mat.color.a >= 0.0001f)
         {
             mat.color = (new Color(0, 0, 0, mat.color.a - Time.deltaTime * 2));
-            pin.position = Vector3.Lerp(pin.transform.position, pin_firstPosition - Vector3.right * 0.2f, 0.1f);
+            pin.localPosition = Vector3.Lerp(pin.localPosition, pin_firstPosition - Vector3.right * 0.05f, 0.1f);
             yield return null;
         }
         if(mat.color.a <= 0.0001f)
