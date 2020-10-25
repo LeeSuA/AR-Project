@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Firebase.Auth;
 
 public class SingletonManager : MonoBehaviour
 {
-    private FirebaseAuth auth;
+    /// -------------------------------
+
     static SingletonManager current = null;
     static GameObject container = null;
 
@@ -13,7 +13,7 @@ public class SingletonManager : MonoBehaviour
     {
         get
         {
-            if(current == null)
+            if (current == null)
             {
                 container = new GameObject();
                 container.name = "Singleton";
@@ -23,10 +23,10 @@ public class SingletonManager : MonoBehaviour
             return current;
         }
     }
-    
 
-    public static List<Vector3> markersPosition = new List<Vector3>();
-    public static string drillCode = null;
-    public static string uID = null;
+
+    // 여기부터 공용 변수 선언
     
+    public static List<Vector4> markersPosition = new List<Vector4>();
+    public static string drillCode = null;
 }

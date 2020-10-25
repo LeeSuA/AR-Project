@@ -9,7 +9,7 @@ public class SceneMove : MonoBehaviour
     public GameObject blackPanel;
     public Animator anim;
     private int index = 0;
-    
+
     public void SceneMoveTo(int sceneIndex)
     {
         StartCoroutine(Fading());

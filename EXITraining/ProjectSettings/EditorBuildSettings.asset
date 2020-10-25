@@ -8,18 +8,20 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/01_Main.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/02_MakeDrill.unity
     guid: 27bd3334f2a2f9040b266685c64bde61
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/03_DoDrill.unity
     guid: 061ff930092aab2488996a1f4cfc429a
   - enabled: 0
-    path: Assets/Scenes/Ranking.unity
-    guid: 0c9e03ffefd152e42a9a0ed950a96e66
+    path: Assets/Scenes/ExtinguisherTest.unity
+    guid: 111ce6dd29493aa478825f04d0b3bf60
   - enabled: 0
-    path: Assets/Scenes/LogIn.unity
-    guid: 4832b4e12acdb294ba557f8e2029a7ca
+    path: Assets/Scenes/StartTraining 1.unity
+    guid: 206772b24bdb71440b1b1cecbbc68315
   m_configObjects:
+    UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 058a9d9f13918f243bd1ea0277381bcd,
+      type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 9f0e335ad5c1a9d4b837a80109ac329f,
       type: 2}
