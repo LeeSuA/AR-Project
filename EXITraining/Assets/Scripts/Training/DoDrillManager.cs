@@ -136,11 +136,14 @@ public class DoDrillManager : MonoBehaviour
         image.texture = codeScanner.Camera.Texture;
 
         RectTransform rect = image.GetComponent<RectTransform>();
-        float screenRatio = (float)Screen.height / (float)Screen.width;
+        float width = image.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
+        float height = image.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
+        float screenRatio = height / width;
         float cameraRatio = (float)codeScanner.Camera.Width / (float)codeScanner.Camera.Height;
         float dif_ratio = screenRatio - cameraRatio;
 
-        rect.sizeDelta = new Vector2(Screen.height, Screen.height / cameraRatio);
+        rect.sizeDelta = new Vector2(height, height / cameraRatio);
+
         Debug.Log(rect.localScale);
         image.transform.localEulerAngles = new Vector3(0, 0, -90);
         
