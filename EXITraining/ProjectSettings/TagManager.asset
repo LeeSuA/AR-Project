@@ -4,9 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Body
-  - Pin
-  - Handle
+  - InputField
+  - menu
+  - LogIn
   layers:
   - Default
   - TransparentFX
@@ -16,9 +16,9 @@ TagManager:
   - UI
   - 
   - 
-  - Body
-  - Pin
-  - Handle
+  - 
+  - 
+  - 
   - 
   - 
   - 

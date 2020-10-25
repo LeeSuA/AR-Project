@@ -1,0 +1,9 @@
+lastUpgrade=01011
+proj.pluginVersion=0.10.11
+proj.AppId=746897847821
+and.BundleId=com.exit.exitraining
+proj.classDir=Assets
+proj.ConstantsClassName=GPGSIds
+and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0d%0a%3c%21--%0d%0aGoogle+Play+game+services+IDs.%0d%0aSave+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.%0d%0a--%3e%0d%0a%3cresources%3e%0d%0a++%3c%21--+app_id+--%3e%0d%0a++%3cstring+name%3d%22app_id%22+translatable%3d%22false%22%3e746897847821%3c%2fstring%3e%0d%0a++%3c%21--+package_name+--%3e%0d%0a++%3cstring+name%3d%22package_name%22+translatable%3d%22false%22%3ecom.exit.exitraining%3c%2fstring%3e%0d%0a++%3c%21--+achievement+DrillRanking+--%3e%0d%0a++%3cstring+name%3d%22achievement_drillranking%22+translatable%3d%22false%22%3eCgkIjezStN4VEAIQAw%3c%2fstring%3e%0d%0a++%3c%21--+leaderboard+DrillRanking+--%3e%0d%0a++%3cstring+name%3d%22leaderboard_drillranking%22+translatable%3d%22false%22%3eCgkIjezStN4VEAIQBA%3c%2fstring%3e%0d%0a%3c%2fresources%3e
+and.ClientId=746897847821-p7e7uek0bv4lgqlk2krliv2d2mjdnqp5.apps.googleusercontent.com
+android.SetupDone=true

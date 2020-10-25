@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "746897847821",
+    "firebase_url": "https://exitraining-3962c.firebaseio.com",
+    "project_id": "exitraining-3962c",
+    "storage_bucket": "exitraining-3962c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:746897847821:android:361143671ced95c1410744",
+        "android_client_info": {
+          "package_name": "com.exit.exitraining"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "746897847821-p7e7uek0bv4lgqlk2krliv2d2mjdnqp5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVmRB6B645wCPiTQ0Jt-DCcJkEpXqZ2_k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "746897847821-p7e7uek0bv4lgqlk2krliv2d2mjdnqp5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

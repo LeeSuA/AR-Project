@@ -16,7 +16,8 @@ public class CreateCode : MonoBehaviour
         code = input.GetComponent<TMP_Text>().text;
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://exitraining-3962c.firebaseio.com/");
         DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
-        reference.Child("DrillCode").Child(code).SetValueAsync("null");
+        reference.Child("DrillCode").Child(code).Child("checkpoint").SetValueAsync("null");
+        reference.Child("DrillCode").Child(code).Child("firepoint").SetValueAsync("null");
 
     }
 }
