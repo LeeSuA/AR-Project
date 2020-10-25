@@ -14,7 +14,7 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: EXIT
   productName: EXITraining
-  defaultCursor: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
+  defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.9372549, g: 0.9372549, b: 0.9372549, a: 1}
   m_ShowUnitySplashScreen: 1
@@ -125,9 +125,8 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.1
-  preloadedAssets:
-  - {fileID: -4497061123308271983, guid: 9f0e335ad5c1a9d4b837a80109ac329f, type: 2}
+  bundleVersion: 0.2
+  preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1

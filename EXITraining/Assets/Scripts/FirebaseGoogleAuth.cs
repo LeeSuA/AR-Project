@@ -16,6 +16,7 @@ public class FirebaseGoogleAuth : MonoBehaviour
     FirebaseAuth auth;
     FirebaseUser user;//사용자 계정
     private static DataSnapshot dataSnapshot=null;
+    public TMP_Text debugText;
     public GameObject googleText;
     public GameObject ranking;
     public GameObject LogOut;
@@ -71,26 +72,27 @@ public class FirebaseGoogleAuth : MonoBehaviour
 
   public void TryGoogleLogin()
     {
-       
         if (!Social.localUser.authenticated) // 로그인 되어 있지 않다면
         {
+            StartCoroutine(TryFirebaseLogin()); // Firebase Login 시도
             Social.localUser.Authenticate(success => // 로그인 시도
             {
                 if (success) // 성공하면
                 {
-                    Debug.Log("Success");
-                    StartCoroutine(TryFirebaseLogin()); // Firebase Login 시도
+                    Debugging("Social Success");
                     googleText.SetActive(false);
                     ranking.SetActive(true);
                     LogOut.SetActive(true);
 
+                    Debugging(user.ToString());
                 }
                 else // 실패하면
                 {
-                    Debug.Log("Fail");
+                    Debugging("Social Failed");
                 }
             });
         }
+        Debugging(user.ToString());
     }
 
    public void TryGoogleLogout()
@@ -104,12 +106,12 @@ public class FirebaseGoogleAuth : MonoBehaviour
             LogOut.SetActive(false);
         }
     }
+
     IEnumerator TryFirebaseLogin()
     {
         while (string.IsNullOrEmpty(((PlayGamesLocalUser)Social.localUser).GetIdToken()))
             yield return null;
         string idToken = ((PlayGamesLocalUser)Social.localUser).GetIdToken();
-        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
 
         Credential credential = GoogleAuthProvider.GetCredential(idToken, null);
         auth.SignInWithCredentialAsync(credential).ContinueWith(task => {
@@ -123,12 +125,13 @@ public class FirebaseGoogleAuth : MonoBehaviour
                 Debug.LogError("SignInWithCredentialAsync encountered an error: " + task.Exception);
                 return;
             }
-            Debug.Log("Success!");
+            Debugging("Firebase Success");
             auth = FirebaseAuth.DefaultInstance;
             user = auth.CurrentUser;
             SingletonManager.uID = user.UserId;
         });
     }
+
     // 리더보드에 점수등록
     public static void ReportLeaderBoard(int score)
     {
@@ -179,13 +182,29 @@ public class FirebaseGoogleAuth : MonoBehaviour
         }
     }
     public void doLeaderboardShow()
-    {   
+    {
+        ReportLeaderBoard(100);
         Social.ShowLeaderboardUI();
     }
     void OnDestroy()
     {
         auth.StateChanged -= AuthStateChanged;
         auth = null;
+    }
+
+    int text_cnt = 0;
+    public void Debugging(string text)
+    {
+        text_cnt++;
+        if(text_cnt < 5)
+        {
+            debugText.text += text + "\n";
+        }
+        else
+        {
+            debugText.text = text + "\n";
+            text_cnt = 0;
+        }
     }
 
 }
