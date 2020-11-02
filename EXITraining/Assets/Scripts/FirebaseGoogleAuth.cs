@@ -77,20 +77,12 @@ public class FirebaseGoogleAuth : MonoBehaviour
             {
                 if (success) // 성공하면
                 {
-                    Debugging("Social Success");
-                    googleText.SetActive(false);
-                    ranking.SetActive(true);
-                    LogOut.SetActive(true);
-
-                    Debugging(user.ToString());
                 }
                 else // 실패하면
                 {
-                    Debugging("Social Failed");
                 }
             });
         }
-        Debugging(user.ToString());
     }
 
    public void TryGoogleLogout()
@@ -123,8 +115,10 @@ public class FirebaseGoogleAuth : MonoBehaviour
                 Debug.LogError("SignInWithCredentialAsync encountered an error: " + task.Exception);
                 return;
             }
-            Debugging("Firebase Success");
             auth = FirebaseAuth.DefaultInstance;
+            googleText.SetActive(false);
+            ranking.SetActive(true);
+            LogOut.SetActive(true);
             user = auth.CurrentUser;
             SingletonManager.uID = user.UserId;
         });
@@ -192,17 +186,5 @@ public class FirebaseGoogleAuth : MonoBehaviour
 
 
     int text_cnt = 0;
-
-    public void Debugging(string text)
-    {
-        text_cnt++;
-        if(text_cnt < 5)
-        {
-        }
-        else
-        {
-            text_cnt = 0;
-        }
-    }
 
 }
